@@ -37,7 +37,7 @@ const router = express.Router();
 
 //passing test - DO NOT TOUCH
 router.get("/all", (req: Request, res: Response) => {
-  const events = getAllEvents();
+  const events: Event[] = getAllEvents();
   res.json(events);
 });
 
@@ -65,21 +65,21 @@ router.get("/all-filtered", (req: Request, res: Response) => {
 
 //passing test - DO NOT TOUCH
 router.get("/by-days/:offset", (req: Request, res: Response) => {
-  const { offset } = req.params;
+  const offset: string = req.params.offset || "0";
   const endDate: number = new Date().setHours(0, 0, 0) - parseInt(offset) * alonTime.OneDay;
   const startDate: number = endDate - alonTime.OneDay * 6;
 
-  const byDays = getSessionsByDayInWeek(startDate, endDate);
+  const byDays: { date: string; count: number }[] = getSessionsByDayInWeek(startDate, endDate);
   console.log(byDays);
   res.json(byDays);
 });
 
 //passing test - DO NOT TOUCH
 router.get("/by-hours/:offset", (req: Request, res: Response) => {
-  const { offset } = req.params;
+  const offset: string = req.params.offset || "0";
   const startDate = new Date().setHours(0, 0, 0) - parseInt(offset) * alonTime.OneDay;
 
-  const byHours = getSessionsByHoursInDay(startDate);
+  const byHours: { hour: string; count: number }[] = getSessionsByHoursInDay(startDate);
 
   res.json(byHours);
 });
@@ -92,6 +92,7 @@ router.get("/week", (req: Request, res: Response) => {
   res.send("/week");
 });
 
+//passing test - DO NOT TOUCH
 router.get("/retention", (req: Request, res: Response) => {
   const dayZero: number = new Date(parseInt(req.query.dayZero)).setHours(0, 0, 0, 0);
   if (!dayZero) res.sendStatus(400);
