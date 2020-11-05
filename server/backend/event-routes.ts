@@ -64,8 +64,8 @@ router.get("/all-filtered", (req: Request, res: Response) => {
 });
 
 //passing test - DO NOT TOUCH
-router.get("/by-days/:offset", (req: Request, res: Response) => {
-  const offset: string = req.params.offset || "0";
+router.get("/by-days/:offset*?", (req: Request, res: Response) => {
+  const offset: string = Number(req.params.offset) ? req.params.offset : "0";
   const endDate: number = new Date().setHours(0, 0, 0) - parseInt(offset) * alonTime.OneDay;
   const startDate: number = endDate - alonTime.OneDay * 6;
 
@@ -75,8 +75,8 @@ router.get("/by-days/:offset", (req: Request, res: Response) => {
 });
 
 //passing test - DO NOT TOUCH
-router.get("/by-hours/:offset", (req: Request, res: Response) => {
-  const offset: string = req.params.offset || "0";
+router.get("/by-hours/:offset*?", (req: Request, res: Response) => {
+  const offset: string = Number(req.params.offset) ? req.params.offset : "0";
   const startDate = new Date().setHours(0, 0, 0) - parseInt(offset) * alonTime.OneDay;
 
   const byHours: { hour: string; count: number }[] = getSessionsByHoursInDay(startDate);
@@ -84,7 +84,7 @@ router.get("/by-hours/:offset", (req: Request, res: Response) => {
   res.json(byHours);
 });
 
-router.get("/today", (req: Request, res: Response) => {
+router.get("/doday", (req: Request, res: Response) => {
   res.send("/today");
 });
 
@@ -101,7 +101,7 @@ router.get("/retention", (req: Request, res: Response) => {
 });
 
 router.get("/:eventId", (req: Request, res: Response) => {
-  res.send("/:eventId");
+  res.send("/:itay");
 });
 
 //passing test - DO NOT TOUCH
