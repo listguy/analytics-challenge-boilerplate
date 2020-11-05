@@ -33,7 +33,7 @@
     "@types/lodash": "4.14.162",
     "@types/lowdb": "1.0.9",
     "@types/morgan": "1.9.1",
-    "@types/node": "^14.11.8",
+    "@types/node": "^14.14.6",
     "@types/passport": "1.0.4",
     "@types/shortid": "0.0.29",
     "@types/styled-components": "^5.1.4",
@@ -91,6 +91,7 @@
   },
   "scripts": {
     "prestart": "npm run db:seed:dev",
+    "start-dev": "nodemon app.ts",
     "start": "npm run start:api",
     "start:api": "npm run tsnode --files ./backend",
     "db:seed": "npm run tsnode scripts/generateSeedData",

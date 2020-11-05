@@ -49,7 +49,9 @@ import {
   NotificationResponseItem,
   TransactionQueryPayload,
   DefaultPrivacyLevel,
-  Event
+  Event,
+  Filter,
+  weeklyRetentionObject,
 } from "../../client/src/models";
 import Fuse from "fuse.js";
 import {
@@ -69,7 +71,9 @@ import {
   isCommentNotification,
 } from "../../client/src/utils/transactionUtils";
 import { DbSchema } from "../../client/src/models/db-schema";
-
+import * as alonTime from "./timeFrames";
+import { start } from "repl";
+import { date } from "faker";
 
 export type TDatabase = {
   users: User[];
@@ -696,6 +700,174 @@ const saveComment = (comment: Comment): Comment => {
   return getCommentById(comment.id);
 };
 
+// Events
+export const getAllEvents = () => db.get(EVENT_TABLE).value();
+
+export const getAllEventsFiltered = (filter: Filter): Event[] => {
+  const dateDirection: 1 | -1 = filter.sorting === "+date" ? 1 : -1;
+  //sort events first
+  const allEventsSorted = getAllEvents().sort(
+    (prev: Event, cur: Event) => (prev.date - cur.date) * dateDirection
+  );
+
+  if (!filter?.browser && !filter?.search && !filter?.type && !filter.os) return allEventsSorted;
+
+  const filterEvents = (event: Event, index: number, array: Event[]): boolean => {
+    const typeIsOkay: boolean = filter?.type ? event.name === filter.type : true;
+    const browserIsOkay: boolean = filter?.browser ? event.browser === filter.browser : true;
+    const osIsOkay: boolean = filter?.os ? event.os === filter.os : true;
+    const searchIsOkay: boolean = filter?.search
+      ? Object.values(event).some((value) => RegExp(`${filter.search}`).test(value))
+      : true;
+    return typeIsOkay && browserIsOkay && searchIsOkay && osIsOkay;
+  };
+  // filter events:
+  const allEventsfiltered = allEventsSorted.filter(filterEvents);
+  return allEventsfiltered;
+};
+
+export const getAllUniqueSessionsInRange = (
+  endDate: number,
+  startDate: number,
+  interval: number
+): Event[] => {
+  const allEvents = getAllEvents();
+  const intervals = [startDate];
+  while (endDate > startDate) intervals.push((startDate += interval));
+
+  const b = intervals.flatMap((inter) =>
+    uniqBy(
+      "session_id",
+      allEvents.filter((event: Event) => inRange(inter, inter + interval, event.date))
+    )
+  );
+
+  return b;
+};
+
+export const splitAndFormatSessionsByDays = (
+  events: Event[],
+  lastDay: number,
+  numberOfDays: number
+) => {
+  // const days: string[] = [];
+  // for (let i = 0; i < numberOfDays; i++) {
+  //   days.push(new Date(lastDay - alonTime.OneDay * i).toISOString().slice(0, 10));
+  // }
+  const days: number[] = [];
+  for (let i = 0; i < numberOfDays; i++) {
+    days.push(lastDay - i * alonTime.OneDay);
+  }
+
+  return days.map((day: number) => {
+    return {
+      date: formatToStringDate(day),
+      // count: events.filter((event) => RegExp(day).test(new Date(event.date).toISOString())).length,
+      count: events.filter((event: Event) => inRange(day, day + alonTime.OneDay, event.date))
+        .length,
+    };
+  });
+};
+
+export const splitAndFormatSessionsByHours = (
+  sessions: Event[],
+  firstHour: number,
+  numberOfHours: number
+) => {
+  const hours: number[] = [];
+  for (let i = 0; i < numberOfHours; i++) {
+    hours.push(firstHour + i * alonTime.OneHour);
+  }
+
+  return hours.map((hour: number) => {
+    return {
+      hour: new Date(hour).getHours().toString().padStart(2, "0") + ":00",
+      count: sessions.filter((session: Event) =>
+        inRange(hour, hour + alonTime.OneHour, session.date)
+      ).length,
+    };
+  });
+};
+
+export const getSessionsByDayInWeek = (startDate: number, endDate: number) => {
+  return splitAndFormatSessionsByDays(
+    getAllUniqueSessionsInRange(endDate, startDate, alonTime.OneDay),
+    endDate,
+    7
+  ).reverse();
+};
+
+export const getSessionsByHoursInDay = (startDate: number) => {
+  return splitAndFormatSessionsByHours(
+    getAllUniqueSessionsInRange(startDate + alonTime.OneHour * 23, startDate, alonTime.OneHour),
+    startDate,
+    24
+  );
+};
+
+export const getRetentionFromDayZero = (dayZero: number): weeklyRetentionObject[] => {
+  const today = new Date().setHours(0, 0, 0, 0);
+  const weekStartPoints: number[] = [];
+  const allRegistrations = getAllEventsFiltered({ sorting: "-date", type: "signup" });
+  const allEvents = getAllEvents();
+
+  for (let i = dayZero; i <= today; i += alonTime.OneWeek) {
+    weekStartPoints.push(i);
+  }
+  const allUniqueActiveUsersByWeeks: string[][] = weekStartPoints.map((weekStartPoint: number) =>
+    uniqBy(
+      "distinct_user_id",
+      allEvents.filter((event: Event) =>
+        inRange(weekStartPoint, weekStartPoint + alonTime.OneWeek, event.date)
+      )
+    ).map((uniqueUserEvent: Event) => uniqueUserEvent.distinct_user_id)
+  );
+  const newUsersByWeek: string[][] = weekStartPoints.map((weekStartPoint: number) =>
+    allRegistrations
+      .filter((registration: Event) =>
+        inRange(weekStartPoint, weekStartPoint + alonTime.OneWeek, registration.date)
+      )
+      .map((registration: Event) => registration.distinct_user_id)
+  );
+  //override empty arrays of 'dead weeks' to prevent null returning and instead return 0
+  newUsersByWeek.forEach((usersArr: string[]) => {
+    if (usersArr.length === 0) usersArr.push("none");
+  });
+
+  return weekStartPoints.map((weekStartPoint: number, i: number) => {
+    return {
+      registrationWeek: i + 1,
+      newUsers: newUsersByWeek[i].length,
+      weeklyRetention: allUniqueActiveUsersByWeeks
+        .slice(i)
+        .map((uniqueUsersOfWeek: string[]) =>
+          Math.round(
+            (uniqueUsersOfWeek.filter((userId: string) => newUsersByWeek[i].includes(userId))
+              .length /
+              newUsersByWeek[i].length) *
+              100
+          )
+        ),
+      start: formatToStringDate(weekStartPoint),
+      end: formatToStringDate(weekStartPoint + alonTime.OneWeek - alonTime.OneDay),
+    };
+  });
+};
+
+export const saveNewEvent = (event: Event) => {
+  db.get(EVENT_TABLE).push(event).write();
+};
+
+const formatToStringDate = (dateInMs: number): string => {
+  const date = new Date(dateInMs);
+  return (
+    date.getDate().toString().padStart(2, "0") +
+    "/" +
+    (date.getMonth() + 1) +
+    "/" +
+    date.getFullYear()
+  );
+};
 // Notifications
 
 export const getNotificationBy = (key: string, value: any): NotificationType =>
@@ -862,6 +1034,5 @@ export const getTransactionsBy = (key: string, value: string) =>
 
 /* istanbul ignore next */
 export const getTransactionsByUserId = (userId: string) => getTransactionsBy("receiverId", userId);
-
 
 export default db;
