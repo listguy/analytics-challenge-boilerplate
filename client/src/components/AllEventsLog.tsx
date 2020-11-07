@@ -91,13 +91,6 @@ const Logs = styled.div`
   }
 `;
 
-const Header = styled.div`
-  color: ${(props) => props.theme.body.text};
-  text-align: center;
-  font-size: 3em;
-  margin-bottom: 3vh;
-`;
-
 //constant filters
 const operatingSystems: os[] = ["windows", "mac", "linux", "ios", "android", "other"];
 const browsers: browser[] = ["chrome", "safari", "edge", "firefox", "ie", "other"];
@@ -387,7 +380,6 @@ const AllEventsLog: React.FC = () => {
 
   return (
     <>
-      <Header>All Events Log</Header>
       <LogsWrapper>
         <SortingColumn>
           <TextField label="Search" onChange={handleSearch} />

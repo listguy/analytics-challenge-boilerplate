@@ -85,19 +85,17 @@ const FrameCell = styled(RegulatCell)`
   background-color: rgba(160, 160, 160, 0.5);
 `;
 
+const SumCell = styled(RegulatCell)`
+  background-color: unset;
+  font-weight: bold;
+`;
+
 const MyTextField = styled(TextField)`
   label,
   input {
     color: ${(props) => props.theme.body.text};
   }
   width: 75%;
-`;
-
-const Header = styled.div`
-  color: ${(props) => props.theme.body.text};
-  text-align: center;
-  font-size: 3em;
-  margin-bottom: 3vh;
 `;
 
 const RetentionCohort: React.FC = () => {
@@ -125,11 +123,9 @@ const RetentionCohort: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, [dayZero]);
-
   console.log(data);
   return (
     <>
-      <Header>Retention Cohort</Header>
       <RetentionChartWrapper>
         <RetentionChartRow theme={themeContext} style={{ padding: 0 }}>
           <LeftColumnCell style={{ backgroundColor: "rgba(160,160,160,0.5)" }}>
@@ -140,7 +136,7 @@ const RetentionCohort: React.FC = () => {
               value={dayZero ? new Date(dayZero).toISOString().slice(0, 10) : nowString()}
             />
           </LeftColumnCell>
-          {data.map((week: weeklyRetentionObject, i) => (
+          {data.map((week: weeklyRetentionObject) => (
             <FrameCell>Week {week.registrationWeek - 1}</FrameCell>
           ))}
         </RetentionChartRow>
@@ -152,7 +148,18 @@ const RetentionCohort: React.FC = () => {
               users
             </span>
           </LeftColumnCell>
-          {/* {data.map()} */}
+          {data.map((week: weeklyRetentionObject, i: number, allWeeks: weeklyRetentionObject[]) => (
+            <SumCell>
+              {Math.floor(
+                allWeeks.reduce(
+                  (sum: number, cur: weeklyRetentionObject) =>
+                    sum + (isNaN(cur.weeklyRetention[i]) ? 0 : cur.weeklyRetention[i]),
+                  0
+                ) / week.weeklyRetention.length
+              )}
+              %
+            </SumCell>
+          ))}
         </RetentionChartRow>
         {data.map((week: weeklyRetentionObject) => (
           <RetentionChartRow theme={themeContext}>

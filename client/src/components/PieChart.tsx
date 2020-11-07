@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 // import { PieChart, Pie, Sector, Cell } from "recharts";
 import { PieChart } from "react-minimal-pie-chart";
 import styled, { ThemeContext } from "styled-components";
-import { JsxElement } from "typescript";
 import { httpClient } from "utils/asyncUtils";
 import { pieChartResponseObject } from "../models/event";
 

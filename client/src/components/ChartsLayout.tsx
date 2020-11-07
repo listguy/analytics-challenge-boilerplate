@@ -62,7 +62,7 @@ export const ChartsLayout = styled.div`
   #all-events {
     width: 95%;
     height: 35%;
-    margin: 5vh auto 5vh;
+    margin: 5vh auto 10vh;
     /* background-color: green;
     grid-area: chart4; */
   }

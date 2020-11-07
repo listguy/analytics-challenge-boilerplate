@@ -717,7 +717,9 @@ export const getAllEventsFiltered = (filter: Filter): Event[] => {
     const browserIsOkay: boolean = filter?.browser ? event.browser === filter.browser : true;
     const osIsOkay: boolean = filter?.os ? event.os === filter.os : true;
     const searchIsOkay: boolean = filter?.search
-      ? Object.values(event).some((value) => RegExp(`${filter.search}`).test(value))
+      ? Object.entries(event).some(([key, value]) =>
+          key === "date" ? false : RegExp(`${filter.search}`).test(value)
+        )
       : true;
     return typeIsOkay && browserIsOkay && searchIsOkay && osIsOkay;
   };

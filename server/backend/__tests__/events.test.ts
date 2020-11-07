@@ -134,6 +134,7 @@ describe("main test", () => {
         search: "100",
       })
       .expect(200);
+    console.log(events.events);
     expect(events.events.length).toBe(2);
     expect(events.events[0].session_id).toMatch(/100/i);
     expect(events.events[1].session_id).toMatch(/100/i);
