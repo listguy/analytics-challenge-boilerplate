@@ -6,12 +6,6 @@ import styled from "styled-components";
 
 const REACT_APP_GOOGLE_MAP_KEY: string = process.env.REACT_APP_GOOGLE_MAP_KEY!;
 
-const Header = styled.div`
-  color: ${(props) => props.theme.body.text};
-  text-align: center;
-  font-size: 3em;
-  margin-bottom: 3vh;
-`;
 const LocationChart: React.FC = () => {
   const [data, setData] = useState<GeoLocation[]>([]);
 
@@ -26,7 +20,6 @@ const LocationChart: React.FC = () => {
 
   return (
     <>
-      <Header>Events on Map</Header>
       <LoadScript googleMapsApiKey={REACT_APP_GOOGLE_MAP_KEY}>
         <GoogleMap
           center={{ lat: 20, lng: 20 }}

@@ -36,9 +36,17 @@ const PairContainer = styled.div`
 `;
 
 const Header = styled.span`
-  font-size: 2.5em;
   margin: 2vh auto;
   color: ${(props) => props.theme.body.text};
+  font-size: 3.5em;
+  font-weight: bold;
+`;
+
+const SubHeader = styled.div`
+  color: ${(props) => props.theme.body.text};
+  text-align: center;
+  font-size: 3em;
+  margin-bottom: 3vh;
 `;
 
 const ThemeButton = styled.span`
@@ -46,6 +54,7 @@ const ThemeButton = styled.span`
   top: 3vh;
   left: 2vw;
   font-size: 2.5em;
+  color: ${(props) => props.theme.body.text};
   cursor: pointer;
 `;
 
@@ -58,50 +67,51 @@ const DashBoard: React.FC = () => {
 
   return (
     <>
-      <ThemeProvider theme={currentStyle}>
-        <GlobalStyle />
-        <ChartsLayout>
-          <Header>Stats & Analytics</Header>
-          <ThemeButton onClick={toggleTheme}>
-            {theme === "light" ? (
-              <WbSunnySharpIcon fontSize={"inherit"} color={"inherit"} />
-            ) : (
-              <Brightness2Sharp fontSize={"inherit"} color={"inherit"} />
-            )}
-          </ThemeButton>
-          <PairContainer>
-            <div id="chart1" className="line-charts">
-              <SessionsByHoursChart />
+      {themeLoaded ? (
+        <ThemeProvider theme={currentStyle}>
+          <GlobalStyle />
+          <ChartsLayout>
+            <Header>Stats & Analytics</Header>
+            <ThemeButton onClick={toggleTheme}>
+              {theme === "light" ? (
+                <WbSunnySharpIcon fontSize={"inherit"} color={"inherit"} />
+              ) : (
+                <Brightness2Sharp fontSize={"inherit"} color={"inherit"} />
+              )}
+            </ThemeButton>
+            <PairContainer>
+              <div id="chart1" className="line-charts">
+                <SessionsByHoursChart />
+              </div>
+              <div className="pie-charts">
+                <GenericPieChart filter="os" title="Operating System" />
+              </div>
+            </PairContainer>
+            <PairContainer>
+              <div id="chart2" className="line-charts">
+                <SessionsByDaysChart />
+              </div>
+              <div className="pie-charts">
+                <GenericPieChart filter="pageView" title="Pages" />
+              </div>
+            </PairContainer>
+            <SubHeader style={{ marginTop: "10vh" }}>Retention Cohort</SubHeader>
+            <div id="retention">
+              <RetentionCohort />
             </div>
-            <div className="pie-charts">
-              <GenericPieChart filter="os" title="Operating System" />
+            <SubHeader>All Events</SubHeader>
+
+            <div id="all-events">
+              <AllEventsLog />
             </div>
-          </PairContainer>
-          <PairContainer>
-            <div id="chart2" className="line-charts">
-              <SessionsByDaysChart />
-              {/* <SessionsByHoursChart className="chart2" /> */}
+            <SubHeader>Events On Map</SubHeader>
+
+            <div id="locations">
+              <LocationChart />
             </div>
-            <div className="pie-charts">
-              <GenericPieChart filter="pageView" title="Pages" />
-            </div>
-          </PairContainer>
-          <div id="retention">
-            <RetentionCohort />
-          </div>
-          <div id="all-events">
-            <AllEventsLog />
-          </div>
-          <div id="locations">
-            <LocationChart />
-          </div>
-          {/* <div className="chart1">a</div>
-          <div className="chart2">a</div>
-          <div className="chart3">a</div>
-          <div className="chart4">a</div>
-          <div className="chart5">a</div> */}
-        </ChartsLayout>
-      </ThemeProvider>
+          </ChartsLayout>
+        </ThemeProvider>
+      ) : null}
     </>
   );
 };

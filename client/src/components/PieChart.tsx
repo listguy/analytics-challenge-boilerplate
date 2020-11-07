@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 // import { PieChart, Pie, Sector, Cell } from "recharts";
 import { PieChart } from "react-minimal-pie-chart";
 import styled, { ThemeContext } from "styled-components";
-import { JsxElement } from "typescript";
 import { httpClient } from "utils/asyncUtils";
 import { pieChartResponseObject } from "../models/event";
 
@@ -72,7 +71,14 @@ interface chartProps {
   title: string;
 }
 
-const segmantsColors: string[] = ["blue", "red", "gray", "green", "orange", "purple"];
+const segmantsColors: string[] = [
+  "rgba(63,81,181,0.9)",
+  "rgba(237, 68, 38,0.9)",
+  "rgba(97, 235, 82,0.9)",
+  "rgba(237, 161, 55,0.9)",
+  "rgba(174, 58, 207,0.9)",
+  "rgba(71, 68, 71,0.9)",
+];
 const GenericPieChart: React.FC<chartProps> = ({ filter, title }) => {
   const [data, setData] = useState();
   const themeContext = useContext(ThemeContext);
