@@ -109,7 +109,7 @@
     "cypress:open:mobile": "cypress open --config viewportWidth=375,viewportHeight=667",
     "cypress:run": "cypress run",
     "cypress:run:mobile": "cypress run --config viewportWidth=375,viewportHeight=667",
-    "test": "jest \"server/backend/_tests_/events.test.ts\"",
+    "test": "jest \"server/backend/__tests__/events.test.ts\"",
     "testo": "jest ",
     "test:headless": "yarn cypress:run",
     "test:api": "yarn cypress:run --spec 'integration/api/*'",
@@ -175,7 +175,7 @@
       "<rootDir>"
     ],
     "testMatch": [
-      "<rootDir>/backend/_tests_/*.test.+(ts|tsx|js)"
+      "<rootDir>/backend/__tests__/*.test.+(ts|tsx|js)"
     ],
     "transform": {
       "^.+\\.(ts|tsx)$": "ts-jest"
