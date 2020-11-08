@@ -1,12 +1,12 @@
-import { any } from "bluebird";
 import { useEffect, useState } from "react";
+type theme = "light" | "dark";
 
-export const useDarkMode = (): // | [theme: string, changeTheme: () => void, themeLoaded: boolean]
-any => {
-  const [theme, setTheme] = useState("light");
-  const [themeLoaded, setThemeLoaded] = useState(false);
+export const useDarkMode = (): any => {
+  // | [theme: string, changeTheme: () => void, themeLoaded: boolean] OR (initialValue: theme): [theme, () => void, boolean] did not work both
+  const [theme, setTheme] = useState<theme>("light");
+  const [themeLoaded, setThemeLoaded] = useState<boolean>(false);
 
-  const setMode = (mode: string): void => {
+  const setMode = (mode: theme): void => {
     window.localStorage.setItem("theme", mode);
     setTheme(mode);
   };
@@ -16,7 +16,7 @@ any => {
   };
 
   useEffect(() => {
-    const localTheme = window.localStorage.getItem("theme");
+    const localTheme: theme = window.localStorage.getItem("theme") as theme;
     localTheme && setTheme(localTheme);
     setThemeLoaded(true);
   }, []);
