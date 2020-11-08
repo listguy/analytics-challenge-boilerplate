@@ -1,4 +1,3 @@
-import { props } from "bluebird";
 import styled from "styled-components";
 
 export const ChartsLayout = styled.div`

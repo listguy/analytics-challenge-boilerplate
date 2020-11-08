@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker, MarkerClusterer } from "@react-google-maps/api";
-import { Location, geolocationChartResponse, GeoLocation } from "models";
+import { GeoLocation } from "models";
 import { httpClient } from "utils/asyncUtils";
-import styled from "styled-components";
 
 const REACT_APP_GOOGLE_MAP_KEY: string = process.env.REACT_APP_GOOGLE_MAP_KEY!;
 
