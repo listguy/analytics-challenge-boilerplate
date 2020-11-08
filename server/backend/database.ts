@@ -741,12 +741,13 @@ export const getAllUniqueSessionsInRange = (
   while (endDate > startDate) intervals.push((startDate += interval));
   console.log("All Good");
 
-  const b = intervals.flatMap((inter) =>
-    uniqBy(
+  const b = intervals.flatMap((inter) => {
+    console.log(inter);
+    return uniqBy(
       "session_id",
       allEvents.filter((event: Event) => inRange(inter, inter + interval, event.date))
-    )
-  );
+    );
+  });
   console.log(b);
   return b;
 };
