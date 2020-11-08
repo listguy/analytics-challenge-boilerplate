@@ -65,23 +65,24 @@ router.get("/all-filtered", (req: Request, res: Response) => {
 
 //passing test - DO NOT TOUCH
 router.get("/by-days/:offset*?", (req: Request, res: Response) => {
-  const offset: string = Number(req.params.offset) ? req.params.offset : "0";
+  const offset: string = req.params.offset ? req.params.offset : "0";
   const endDate: number = new Date().setHours(0, 0, 0) - parseInt(offset) * alonTime.OneDay;
   const startDate: number = endDate - alonTime.OneDay * 6;
 
   const byDays: { date: string; count: number }[] = getSessionsByDayInWeek(startDate, endDate);
-  console.log(byDays);
+
   res.json(byDays);
 });
 
 //passing test - DO NOT TOUCH
 router.get("/by-hours/:offset*?", (req: Request, res: Response) => {
-  const offset: string = Number(req.params.offset) ? req.params.offset : "0";
-  const startDate = new Date().setHours(0, 0, 0) - parseInt(offset) * alonTime.OneDay;
+  const offset: string = req.params.offset ? req.params.offset : "0";
+  const startDate: number = new Date().setHours(0, 0, 0) - parseInt(offset) * alonTime.OneDay;
 
   const byHours: { hour: string; count: number }[] = getSessionsByHoursInDay(startDate);
 
   res.json(byHours);
+  res.send("lili");
 });
 
 router.get("/doday", (req: Request, res: Response) => {

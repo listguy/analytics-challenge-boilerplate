@@ -1,53 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-// import { PieChart, Pie, Sector, Cell } from "recharts";
 import { PieChart } from "react-minimal-pie-chart";
 import styled, { ThemeContext } from "styled-components";
 import { httpClient } from "utils/asyncUtils";
 import { pieChartResponseObject } from "../models/event";
-
-//#region Fuck off recharts
-const COLORS: string[] = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-const RADIAN: number = Math.PI / 180;
-//helper function to create label
-// const renderCustomizedLabel = (inte: any): any => {
-//   const {
-//     cx,
-//     cy,
-//     midAngle,
-//     innerRadius,
-//     outerRadius,
-//     percent,
-//     index,
-//   }: {
-//     cx: number;
-//     cy: number;
-//     midAngle: number;
-//     innerRadius: number;
-//     outerRadius: number;
-//     percent: number;
-//     index: number;
-//   } = inte;
-// const renderCustomizedLabel = (
-//   cx: number,
-//   cy: number,
-//   midAngle: number,
-//   innerRadius: number,
-//   outerRadius: number,
-//   percent: number,
-//   index: number
-// ): any => {
-//   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-//   const x = cx + radius * Math.cos(-midAngle * RADIAN);
-//   const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-//   return (
-//     <text x={x} y={y} fill="white" textAnchor={x > cx ? "start" : "end"} dominantBaseline="central">
-//       {`${(percent * 100).toFixed(0)}%`}
-//     </text>
-//   );
-// };
-//#endregion
 
 const InnerText = styled.div`
   position: absolute;
@@ -80,7 +35,7 @@ const segmantsColors: string[] = [
   "rgba(71, 68, 71,0.9)",
 ];
 const GenericPieChart: React.FC<chartProps> = ({ filter, title }) => {
-  const [data, setData] = useState();
+  const [data, setData] = useState<any>();
   const themeContext = useContext(ThemeContext);
   //#region fuck off recharts
   //   const fake = [
@@ -151,6 +106,5 @@ const GenericPieChart: React.FC<chartProps> = ({ filter, title }) => {
     </PieContainer>
   );
 };
-//#endregion
 
 export default GenericPieChart;

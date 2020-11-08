@@ -735,7 +735,7 @@ export const getAllUniqueSessionsInRange = (
 ): Event[] => {
   const allEvents = getAllEvents();
   const intervals = [startDate];
-  while (endDate > startDate) intervals.push((startDate += interval));
+  // while (endDate > startDate) intervals.push((startDate += interval));
 
   const b = intervals.flatMap((inter) =>
     uniqBy(
