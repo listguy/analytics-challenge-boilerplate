@@ -733,9 +733,13 @@ export const getAllUniqueSessionsInRange = (
   startDate: number,
   interval: number
 ): Event[] => {
+  console.log("All Good");
   const allEvents = getAllEvents();
+  console.log("All Good");
   const intervals = [startDate];
+  console.log("All Good");
   while (endDate > startDate) intervals.push((startDate += interval));
+  console.log("All Good");
 
   const b = intervals.flatMap((inter) =>
     uniqBy(
@@ -752,16 +756,16 @@ export const splitAndFormatSessionsByDays = (
   lastDay: number,
   numberOfDays: number
 ) => {
-  // const days: string[] = [];
-  // for (let i = 0; i < numberOfDays; i++) {
-  //   days.push(new Date(lastDay - alonTime.OneDay * i).toISOString().slice(0, 10));
-  // }
   const days: number[] = [];
+  console.log("All Good");
   for (let i = 0; i < numberOfDays; i++) {
+    console.log("All Good");
     days.push(lastDay - i * alonTime.OneDay);
   }
+  console.log("All Good");
 
   return days.map((day: number) => {
+    console.log("All Good");
     return {
       date: formatToStringDate(day),
       // count: events.filter((event) => RegExp(day).test(new Date(event.date).toISOString())).length,
@@ -776,12 +780,15 @@ export const splitAndFormatSessionsByHours = (
   firstHour: number,
   numberOfHours: number
 ) => {
+  console.log("All Good");
   const hours: number[] = [];
+  console.log("All Good");
   for (let i = 0; i < numberOfHours; i++) {
     hours.push(firstHour + i * alonTime.OneHour);
   }
-
+  console.log("All Good");
   return hours.map((hour: number) => {
+    console.log("All Good");
     return {
       hour: new Date(hour).getHours().toString().padStart(2, "0") + ":00",
       count: sessions.filter((session: Event) =>
@@ -792,6 +799,7 @@ export const splitAndFormatSessionsByHours = (
 };
 
 export const getSessionsByDayInWeek = (startDate: number, endDate: number) => {
+  console.log("All Good");
   return splitAndFormatSessionsByDays(
     getAllUniqueSessionsInRange(endDate, startDate, alonTime.OneDay),
     endDate,
@@ -861,6 +869,7 @@ export const saveNewEvent = (event: Event) => {
 };
 
 const formatToStringDate = (dateInMs: number): string => {
+  console.log("All Good");
   const date = new Date(dateInMs);
   return (
     date.getDate().toString().padStart(2, "0") +
