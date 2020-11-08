@@ -67,13 +67,9 @@ router.get("/all-filtered", (req: Request, res: Response) => {
 router.get("/by-days/:offset*?", (req: Request, res: Response) => {
   try {
     const offset: string = req.params.offset ? req.params.offset : "0";
-    console.log("All Good");
     const endDate: number = new Date().setHours(0, 0, 0) - parseInt(offset) * alonTime.OneDay;
-    console.log("All Good");
     const startDate: number = endDate - alonTime.OneDay * 6;
-    console.log("All Good");
     const byDays: { date: string; count: number }[] = getSessionsByDayInWeek(startDate, endDate);
-    console.log("All Good");
 
     res.json(byDays);
   } catch (e) {
@@ -90,7 +86,6 @@ router.get("/by-hours/:offset*?", (req: Request, res: Response) => {
   const byHours: { hour: string; count: number }[] = getSessionsByHoursInDay(startDate);
 
   res.json(byHours);
-  // res.send("lolo");
 });
 
 router.get("/doday", (req: Request, res: Response) => {
